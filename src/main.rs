@@ -34,7 +34,7 @@ fn main() {
     };
 
     let mut program = match ShaderProgram::link([Shader::from_file("data/shader.vert", gfx::shader::VertexShader),
-                                             Shader::from_file("data/shader.frag", gfx::shader::FragmentShader)]) {
+                                                 Shader::from_file("data/shader.frag", gfx::shader::FragmentShader)]) {
         Err(msg) => fail!("Could not link shader program: {}", msg),
         Ok(program) => program
     };
