@@ -10,6 +10,22 @@ pub struct Block {
 }
 
 impl Block {
+    pub fn is_north_direction_allowed(&self) -> bool {
+        self.type_map & 1 != 0
+    }
+
+    pub fn is_south_direction_allowed(&self) -> bool {
+        self.type_map & 2 != 0
+    }
+
+    pub fn is_west_direction_allowed(&self) -> bool {
+        self.type_map & 4 != 0
+    }
+
+    pub fn is_east_direction_allowed(&self) -> bool {
+        self.type_map & 8 != 0
+    }
+
     pub fn get_block_type(&self) -> BlockType {
         let v1: u8 = if self.type_map & 16 != 0 { 1 } else { 0 };
         let v2: u8 = if self.type_map & 32 != 0 { 2 } else { 0 };
@@ -24,6 +40,17 @@ impl Block {
             5 => Building,
             _ => Unused
         }
+    }
+
+    pub fn get_slope_type(&self) -> u8 {
+        let v1: u8 = if self.type_map & 256 != 0 { 1 } else { 0 };
+        let v2: u8 = if self.type_map & 512 != 0 { 2 } else { 0 };
+        let v3: u8 = if self.type_map & 1024 != 0 { 4 } else { 0 };
+        let v4: u8 = if self.type_map & 2048 != 0 { 8 } else { 0 };
+        let v5: u8 = if self.type_map & 4096 != 0 { 16 } else { 0 };
+        let v6: u8 = if self.type_map & 8192 != 0 { 32 } else { 0 };
+
+        v1 + v2 + v3 + v4 + v5 + v6
     }
 
     pub fn is_flat(&self) -> bool {
@@ -63,7 +90,7 @@ impl Block {
         self.type_map_ext & 32 != 0
     }
 
-    pub fn should_flip_west_east(&self) -> bool {
+    pub fn should_flip_east_west(&self) -> bool {
         self.type_map_ext & 64 != 0
     }
 
