@@ -4,6 +4,7 @@ use std::io::{File, IoResult};
 use std::mem::size_of;
 
 pub mod block;
+pub mod block_data;
 pub mod route;
 pub mod object;
 pub mod location;
