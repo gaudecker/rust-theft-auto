@@ -15,11 +15,11 @@ static header_size: u64 = 28;
 static base_size: u64 = 262144;
 
 pub struct Map {
-    blocks: Vec<Vec<Vec<block::Block>>>,
-    objects: Vec<object::Object>,
-    routes: Vec<route::Route>,
-    locations: HashMap<location::LocationType, Vec<location::Location>>,
-    zones: Vec<zone::Zone>
+    pub blocks: Vec<Vec<Vec<block::Block>>>,
+    pub objects: Vec<object::Object>,
+    pub routes: Vec<route::Route>,
+    pub locations: HashMap<location::LocationType, Vec<location::Location>>,
+    pub zones: Vec<zone::Zone>
 }
 
 impl Map {

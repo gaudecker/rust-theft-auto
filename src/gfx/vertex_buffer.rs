@@ -3,7 +3,7 @@ use gl::types::{GLuint, GLsizeiptr};
 use std::mem::size_of;
 use gfx::libc::c_void;
 
-struct VertexBuffer {
+pub struct VertexBuffer {
     id: uint
 }
 
