@@ -2,15 +2,11 @@
 
 name = "gta"
 version = "0.0.1"
-authors = ["Rottis <rottis@fea.st>"]
+authors = ["Eeli <eeli@fea.st>"]
 
-[dependencies.gl]
-git = "https://github.com/bjz/gl-rs"
 [dependencies.piston]
 git = "https://github.com/PistonDevelopers/piston"
-[dependencies.glfw_game_window]
-git = "https://github.com/PistonDevelopers/glfw_game_window"
-[dependencies.vecmath]
-git = "https://github.com/PistonDevelopers/vecmath"
 [dependencies.sdl2_game_window]
 git = "https://github.com/PistonDevelopers/sdl2_game_window"
+[dependencies.gfx]
+git = "http://github.com/gfx-rs/gfx-rs"
