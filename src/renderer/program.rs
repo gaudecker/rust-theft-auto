@@ -13,11 +13,11 @@ pub struct Program {
 
 impl Program {
     pub fn new<D: Device<C>, C: CommandBuffer>(r: &mut Renderer<D, C>, name: &str) -> Program {
-        let vert_src = match load_shader_source("../data/shader.vert") {
+        let vert_src = match load_shader_source("data/shader.vert") {
             Ok(src) => src,
             Err(err) => fail!(err.desc)
         };
-        let frag_src = match load_shader_source("../data/shader.frag") {
+        let frag_src = match load_shader_source("data/shader.frag") {
             Ok(src) => src,
             Err(err) => fail!(err.desc)
         };

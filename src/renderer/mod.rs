@@ -16,6 +16,8 @@ pub struct Vertex {
     pub pos: [f32, ..3],
     #[as_float]
     pub uv: [f32, ..2],
+    #[as_float]
+    pub color: [f32, ..3]
 }
 
 #[shader_param(Program)]
@@ -27,11 +29,18 @@ pub struct Params {
 }
 
 impl Vertex {
-    pub fn new(pos: [f32, ..3], uv: [f32, ..2]) -> Vertex {
+    pub fn new(pos: [f32, ..3], uv: [f32, ..2], color: [f32, ..3]) -> Vertex {
         Vertex {
             pos: pos,
-            uv: uv
+            uv: uv,
+            color: color
         }
+    }
+}
+
+impl Clone for Vertex {
+    fn clone(&self) -> Vertex {
+        *self
     }
 }
 

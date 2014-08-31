@@ -14,9 +14,11 @@ use map::{Map};
 use renderer::{Renderer, Vertex, Params, _ParamsLink};
 use renderer::program::Program;
 use renderer::buffer::Buffer;
+use chunk::Chunk;
 
 mod map;
 mod renderer;
+mod chunk;
 
 fn main() {
     let mut window = Window::new(
@@ -30,12 +32,16 @@ fn main() {
     );
     window.capture_cursor(true);
 
-    // let map = match Map::from_file("data/nyc.cmp") {
-    //     Err(why) => fail!("Could not load map: {}", why.desc),
-    //     Ok(map) => map
-    // };
+    let map = match Map::from_file("data/nyc.cmp") {
+        Err(why) => fail!("Could not load map: {}", why.desc),
+        Ok(map) => map
+    };
 
-    let vertex_data = map::block_data::from_slope_type(9);
+    let vertex_data = match Chunk::from_map(&map, [0, 0]) {
+        Some(verts) => verts.verts,
+        None => fail!("Couldn't generate chunk from map!")
+    };
+
 //     let mesh = device.create_mesh(vertex_data);
 //     let index_data: Vec<u8> = vec![
 //         0, 1, 2, 2, 3, 0, // top
@@ -45,12 +51,6 @@ fn main() {
 //         16, 17, 18, 18, 19, 16, // front
 //         20, 21, 22, 22, 23, 20, // back
 //     ];
-
-//     let slice = {
-//         let buf = device.create_buffer_static(&index_data.as_slice());
-//         gfx::IndexSlice8(gfx::LineStrip, buf, 0, 36)
-//     };
-
     
     let (mut device, frame) = window.gfx();
     let mut renderer = Renderer::new(device, frame);
@@ -72,9 +72,12 @@ fn main() {
         }
     }.projection();
 
+    let mut first_person_settings = cam::FirstPersonSettings::keyboard_wasd();
+    first_person_settings.speed_horizontal = 12.0;
+    first_person_settings.speed_vertical = 6.0;
     let mut first_person = cam::FirstPerson::new(
         [0.5f32, 0.5, 4.0],
-        cam::FirstPersonSettings::keyboard_wasd()
+        first_person_settings
     );
 
     let mut game_iter = piston::GameIterator::new(

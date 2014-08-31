@@ -99,6 +99,7 @@ impl Block {
     }
 }
 
+#[deriving(PartialEq)]
 pub enum BlockType {
     Air,
     Water,

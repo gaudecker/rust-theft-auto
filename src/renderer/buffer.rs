@@ -21,12 +21,11 @@ impl<V: VertexFormat, P: ShaderParam<L>, L> Buffer<V, P, L> {
         let buf = r.graphics.device.create_buffer(data.len(), gfx::UsageStatic);
         r.graphics.device.update_buffer(buf, &data, 0);
 
-        //let p = Program::new(&r, "test");
         let mesh = gfx::Mesh::from_format(buf, data.len() as u32);
 
         Buffer {
             buf: buf,
-            batch: r.graphics.make_batch(&mesh, mesh.get_slice(gfx::LineStrip),
+            batch: r.graphics.make_batch(&mesh, mesh.get_slice(gfx::Line),
                                          &program.handle, &r.drawstate).unwrap()
         }
     }
