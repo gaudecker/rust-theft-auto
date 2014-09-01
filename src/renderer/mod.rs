@@ -3,9 +3,11 @@ extern crate gfx_macros;
 
 use gfx;
 use gfx::{Device, DeviceHelper, BufferHandle, VertexFormat};
-use gfx::shade::ShaderParam;
+use gfx::shade::{ShaderParam, TextureParam};
 use device;
 use device::draw::CommandBuffer;
+use image;
+use image::{GenericImage, ImageBuf, MutableRefImage, Pixel, Rgba, SubImage};
 
 pub mod buffer;
 pub mod program;
@@ -25,7 +27,9 @@ pub struct Params {
     #[name = "projection"]
     pub projection: [[f32, ..4], ..4],
     #[name = "view"]
-    pub view: [[f32, ..4], ..4]
+    pub view: [[f32, ..4], ..4],
+    #[name = "s_texture"]
+    pub texture: TextureParam
 }
 
 impl Vertex {
@@ -41,6 +45,53 @@ impl Vertex {
 impl Clone for Vertex {
     fn clone(&self) -> Vertex {
         *self
+    }
+}
+
+pub struct Texture {
+    pub handle: gfx::TextureHandle,
+    width: u32,
+    height: u32
+}
+
+impl Texture {
+    /// Loads image by relative file name to the asset root.
+    pub fn from_file<D: Device<C>, C: CommandBuffer>(path: &Path, d: &mut D) -> Result<Texture, String> {
+        Ok(Texture::from_rgba8(try!(load_rgba8(path)), d))
+    }
+
+    pub fn from_rgba8<D: Device<C>, C: CommandBuffer>(img: ImageBuf<Rgba<u8>>, d: &mut D) -> Texture {
+        let (width, height) = img.dimensions();
+
+        let mut ti = gfx::tex::TextureInfo::new();
+        ti.width = width as u16;
+        ti.height = height as u16;
+        ti.kind = gfx::tex::Texture2D;
+        ti.format = gfx::tex::RGBA8;
+
+        let tex = d.create_texture(ti).unwrap();
+
+        d.update_texture(&tex, &ti.to_image_info(), &img.into_vec()).unwrap();
+        d.generate_mipmap(&tex);
+
+        Texture {
+            handle: tex,
+            width: width,
+            height: height
+        }
+    }
+}
+
+fn load_rgba8(path: &Path) -> Result<ImageBuf<Rgba<u8>>, String> {
+    match image::open(path) {
+        Ok(image::ImageRgba8(img)) => Ok(img),
+        Ok(image::ImageRgb8(img)) => {
+            let (w, h) = img.dimensions();
+            Ok(ImageBuf::from_fn(w, h, |x, y| img.get_pixel(x, y).to_rgba()))
+        }
+        Ok(img) => return Err(format!("Unsupported color type {} in '{}'",
+                                      img.color(), path.display())),
+        Err(e) => return Err(format!("Could not load '{}': {}", path.display(), e))
     }
 }
 

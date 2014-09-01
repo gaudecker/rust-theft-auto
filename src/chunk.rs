@@ -32,6 +32,7 @@ impl Chunk {
                 for z in range(0, h) {
                     let block = map.blocks[x][y][z];
 
+                    // No need to draw air
                     if block.get_block_type() == block::Air {
                         continue;
                     }

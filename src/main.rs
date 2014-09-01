@@ -5,13 +5,14 @@ extern crate sdl2_game_window;
 extern crate gfx;
 extern crate device;
 extern crate render;
+extern crate image;
 
 use sdl2_game_window::GameWindowSDL2 as Window;
 use gfx::{Device, DeviceHelper};
 use piston::{cam, GameWindow};
 
 use map::{Map};
-use renderer::{Renderer, Vertex, Params, _ParamsLink};
+use renderer::{Renderer, Texture, Vertex, Params, _ParamsLink};
 use renderer::program::Program;
 use renderer::buffer::Buffer;
 use chunk::Chunk;
@@ -41,16 +42,8 @@ fn main() {
         Some(verts) => verts.verts,
         None => fail!("Couldn't generate chunk from map!")
     };
-    
-    let (mut device, frame) = window.gfx();
-    let mut renderer = Renderer::new(device, frame);
 
-    let prog: Program = Program::new(&mut renderer, "shader");
-    let buf: Buffer<Vertex, Params, _ParamsLink> = Buffer::new(
-        &mut renderer,
-        &prog,
-        vertex_data.as_slice()
-    );
+    let (mut device, frame) = window.gfx();
 
     let projection = cam::CameraPerspective {
         fov: 90.0f32,
@@ -77,14 +70,29 @@ fn main() {
             max_frames_per_second: 60
         }
     );
+
+    let texture = Texture::from_file(&Path::new("data/texture.png"), &mut device).unwrap();
+    let sam = device.create_sampler(gfx::tex::SamplerInfo::new(gfx::tex::Scale, gfx::tex::Tile));
+
+    let mut renderer = Renderer::new(device, frame);
+
+    let prog: Program = Program::new(&mut renderer, "shader");
+    let buf: Buffer<Vertex, Params, _ParamsLink> = Buffer::new(
+        &mut renderer,
+        &prog,
+        vertex_data.as_slice()
+    );
+
+    let mut data = renderer::Params {
+        projection: projection,
+        view: first_person.camera(0.0).orthogonal(),
+        texture: (texture.handle, Some(sam))
+    };
     
     for e in game_iter {
         match e {
             piston::Render(_args) => {
-                let data = renderer::Params {
-                    projection: projection,
-                    view: first_person.camera(0.0).orthogonal()
-                };
+                data.view = first_person.camera(0.0).orthogonal();
 
                 renderer.clear();
                 renderer.render(buf, data);

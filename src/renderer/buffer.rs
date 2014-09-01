@@ -25,7 +25,7 @@ impl<V: VertexFormat, P: ShaderParam<L>, L> Buffer<V, P, L> {
 
         Buffer {
             buf: buf,
-            batch: r.graphics.make_batch(&mesh, mesh.get_slice(gfx::Line),
+            batch: r.graphics.make_batch(&mesh, mesh.get_slice(gfx::TriangleStrip),
                                          &program.handle, &r.drawstate).unwrap()
         }
     }
