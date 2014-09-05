@@ -2,12 +2,12 @@
 extern crate gfx_macros;
 
 use gfx;
-use gfx::{Device, DeviceHelper, BufferHandle, VertexFormat};
+use gfx::{Device, VertexFormat};
 use gfx::shade::{ShaderParam, TextureParam};
 use device;
 use device::draw::CommandBuffer;
 use image;
-use image::{GenericImage, ImageBuf, MutableRefImage, Pixel, Rgba, SubImage};
+use image::{GenericImage, ImageBuf, MutableRefImage, Pixel, Rgba};
 
 pub mod buffer;
 pub mod program;
