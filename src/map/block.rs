@@ -9,19 +9,24 @@ pub struct Block {
     pub lid: u8
 }
 
+// Methods for type_map.
 impl Block {
+    /// Returns `true` if vehicles are allowed to drive north.
     pub fn is_north_direction_allowed(&self) -> bool {
         self.type_map & 1 != 0
     }
 
+    /// Returns `true` if vehicles are allowed to drive south.
     pub fn is_south_direction_allowed(&self) -> bool {
         self.type_map & 2 != 0
     }
 
+    /// Returns `true` if vehicles are allowed to drive west.
     pub fn is_west_direction_allowed(&self) -> bool {
         self.type_map & 4 != 0
     }
 
+    /// Returns `true` if vehicles are allowed to drive east.
     pub fn is_east_direction_allowed(&self) -> bool {
         self.type_map & 8 != 0
     }
@@ -56,8 +61,22 @@ impl Block {
     pub fn is_flat(&self) -> bool {
         self.type_map & 128 != 0
     }
+
+    /// Returns the rotation of the lid in degrees.
+    pub fn get_lid_rotation(&self) -> u16 {
+        let v1: u8 = if self.type_map & 16384 != 0 { 1 } else { 0 };
+        let v2: u8 = if self.type_map & 32768 != 0 { 2 } else { 0 };
+
+        match v1 + v2 {
+            1 => 90,
+            2 => 180,
+            3 => 270,
+            _ => 0
+        }
+    }
 }
 
+// Methods for type_map_ext.
 impl Block {
     pub fn is_traffic_light(&self) -> bool {
         self.type_map_ext & 1 != 0
