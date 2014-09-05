@@ -39,7 +39,7 @@ impl Chunk {
                     
                     let block_verts = map::block_data::from_block(
                         block,
-                        [x as f32, z as f32, y as f32]
+                        [256.0 - x as f32, z as f32, y as f32]
                     );
                     v.push_all(block_verts.as_slice());
                 }

@@ -1,5 +1,5 @@
 use gfx;
-use gfx::{Device, DeviceHelper, VertexFormat, BufferHandle};
+use gfx::{Device, DeviceHelper, VertexFormat, BufferHandle, ToSlice};
 use gfx::shade::ShaderParam;
 use device;
 use device::draw::CommandBuffer;
@@ -25,8 +25,9 @@ impl<V: VertexFormat, P: ShaderParam<L>, L> Buffer<V, P, L> {
 
         Buffer {
             buf: buf,
-            batch: r.graphics.make_batch(&mesh, mesh.get_slice(gfx::TriangleStrip),
-                                         &program.handle, &r.drawstate).unwrap()
+            batch: r.graphics.make_batch(&program.handle, &mesh,
+                                         mesh.to_slice(gfx::TriangleStrip),
+                                         &r.drawstate).unwrap()
         }
     }
 }

@@ -7,9 +7,9 @@ extern crate device;
 extern crate render;
 extern crate image;
 
-use sdl2_game_window::GameWindowSDL2 as Window;
+use sdl2_game_window::WindowSDL2;
 use gfx::{Device, DeviceHelper};
-use piston::{cam, GameWindow};
+use piston::{cam, Window};
 
 use map::{Map};
 use renderer::{Renderer, Texture, Vertex, Params, _ParamsLink};
@@ -22,13 +22,14 @@ mod renderer;
 mod chunk;
 
 fn main() {
-    let mut window = Window::new(
+    let mut window = WindowSDL2::new(
         piston::shader_version::opengl::OpenGL_3_2, 
-        piston::GameWindowSettings {
+        piston::WindowSettings {
             title: "gta".to_string(),
             size: [960, 540],
             fullscreen: false,
-            exit_on_esc: true
+            exit_on_esc: true,
+            samples: 4
         }
     );
     window.capture_cursor(true);
@@ -59,13 +60,13 @@ fn main() {
     first_person_settings.speed_horizontal = 12.0;
     first_person_settings.speed_vertical = 6.0;
     let mut first_person = cam::FirstPerson::new(
-        [0.5f32, 0.5, 4.0],
+        [128.0, 6.0, 128.0],
         first_person_settings
     );
 
-    let mut game_iter = piston::GameIterator::new(
+    let mut game_iter = piston::EventIterator::new(
         &mut window,
-        &piston::GameIteratorSettings {
+        &piston::EventSettings {
             updates_per_second: 120,
             max_frames_per_second: 60
         }
