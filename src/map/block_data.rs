@@ -4,8 +4,11 @@ use super::super::renderer::{Vertex};
 use super::block;
 use super::block::{Block, BlockType};
 
+/// Returns vertices matching the topology of `block` offset by `offset`.
 pub fn from_block(block: Block, offset: [f32, ..3]) -> Vec<Vertex> {
     let t = block.get_slope_type() as f32;
+
+    // Calculate the lid vertices based on slope type.
     let (z1, z2, z3, z4) = match t {
         1.0..8.0 => {
             ((((t - 1.0) % 2.0) + ord(t, [1.0, 2.0, 5.0, 6.0])) / 2.0,
@@ -35,31 +38,32 @@ pub fn from_block(block: Block, offset: [f32, ..3]) -> Vec<Vertex> {
         // front
         Vertex::new([x +  0.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
         Vertex::new([x +  1.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  z4,  z +  1.0], [1.0, 0.0], col),
         Vertex::new([x +  0.0, y +  z3,  z +  1.0], [0.0, 0.0], col),
+        Vertex::new([x +  1.0, y +  z4,  z +  1.0], [1.0, 0.0], col),
         // back
         Vertex::new([x +  1.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
         Vertex::new([x +  0.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  z1,  z +  0.0], [1.0, 0.0], col),
         Vertex::new([x +  1.0, y +  z2,  z +  0.0], [0.0, 0.0], col),
+        Vertex::new([x +  0.0, y +  z1,  z +  0.0], [1.0, 0.0], col),
         // right
         Vertex::new([x +  1.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
         Vertex::new([x +  1.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  z2,  z +  0.0], [1.0, 0.0], col),
         Vertex::new([x +  1.0, y +  z4,  z +  1.0], [0.0, 0.0], col),
+        Vertex::new([x +  1.0, y +  z2,  z +  0.0], [1.0, 0.0], col),
         // left
         Vertex::new([x +  0.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
         Vertex::new([x +  0.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  z3,  z +  1.0], [1.0, 0.0], col),
         Vertex::new([x +  0.0, y +  z1,  z +  0.0], [0.0, 0.0], col),
+        Vertex::new([x +  0.0, y +  z3,  z +  1.0], [1.0, 0.0], col),
         // top
         Vertex::new([x +  0.0, y +  z3,  z +  1.0], [0.0, 1.0], col),
         Vertex::new([x +  1.0, y +  z4,  z +  1.0], [1.0, 1.0], col),
+        Vertex::new([x +  0.0, y +  z1,  z +  0.0], [0.0, 0.0], col),
         Vertex::new([x +  1.0, y +  z2,  z +  0.0], [1.0, 0.0], col),
-        Vertex::new([x +  0.0, y +  z1,  z +  0.0], [0.0, 0.0], col)
     )
 }
 
+/// Returns a color vector based on `BlockType`.
 pub fn color_from_block_type(block_type: BlockType) -> [f32, ..3] {
     match block_type {
         block::Water => [0.0, 0.0, 1.0],

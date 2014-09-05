@@ -105,7 +105,7 @@ pub struct Renderer<D: Device<C>, C: CommandBuffer> {
 impl<D: Device<C>, C: CommandBuffer> Renderer<D, C> {
     pub fn new(mut device: D, frame: gfx::Frame) -> Renderer<D, C> {
         let mut drawstate = gfx::DrawState::new().depth(gfx::state::LessEqual, true);
-        drawstate.primitive.front_face = gfx::state::Clockwise;
+        drawstate.primitive.front_face = gfx::state::CounterClockwise;
 
         Renderer {
             graphics: gfx::Graphics::new(device),
