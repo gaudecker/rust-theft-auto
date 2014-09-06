@@ -12,11 +12,13 @@ use gfx::{Device, DeviceHelper};
 use piston::{cam, Window};
 
 use map::{Map, block, block_data};
+use style::{Style};
 use renderer::{Renderer, Texture, Vertex, Params, _ParamsLink};
 use renderer::program::Program;
 use renderer::buffer::Buffer;
 use chunk::Chunk;
 
+mod style;
 mod map;
 mod renderer;
 mod chunk;
@@ -37,6 +39,10 @@ fn main() {
     let map = match Map::from_file("data/nyc.cmp") {
         Err(why) => fail!("Could not load map: {}", why.desc),
         Ok(map) => map
+    };
+    let style = match Style::from_file("data/style001.g24") {
+        Err(why) => fail!("Could not load style: {}", why.desc),
+        Ok(style) => style
     };
 
     let (vertex_data, index_data) = match Chunk::from_map(&map, [0, 0]) {

@@ -39,18 +39,12 @@ impl Chunk {
                     if block.get_block_type() == block::Air {
                         continue;
                     }
-                    // if index_offset < 100 {
-                    //     println!("Indices from {}", index_offset);
-                    // }
+
                     let (verts, indices) = map::block_data::from_block(
                         block,
                         [256.0 - x as f32, z as f32, y as f32],
                         index_offset
                     );
-
-                    if (index_offset < 100 && indices.len() > 0) {
-                        println!("{} {}", verts.len(), indices[0]);
-                    }
 
                     index_offset += verts.len() as u32;
                     
