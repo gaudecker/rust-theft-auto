@@ -38,53 +38,54 @@ pub fn from_block(block: Block, offset: [f32, ..3], n: u32) -> (Vec<Vertex>, Vec
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
     
+    let tc = tex_coords(block.get_block_type());
     // top
     // if block.lid != 0 {
         vertices.push_all(
-            vec!(Vertex::new([x +  0.0, y +  y3,  z +  1.0], [0.0, 1.0], col),
-                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], [1.0, 1.0], col),
-                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], [0.0, 0.0], col),
-                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], [1.0, 0.0], col)
+            vec!(Vertex::new([x +  0.0, y +  y3,  z +  1.0], tc[0], col),
+                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], tc[1], col),
+                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], tc[2], col),
+                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], tc[3], col)
             ).as_slice());
     // }
 
     // front
     // if block.south != 0 {
         vertices.push_all(
-            vec!(Vertex::new([x +  0.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
-                 Vertex::new([x +  1.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
-                 Vertex::new([x +  0.0, y +  y3,  z +  1.0], [0.0, 0.0], col),
-                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], [1.0, 0.0], col),
+            vec!(Vertex::new([x +  0.0, y +  0.0, z +  1.0], tc[0], col),
+                 Vertex::new([x +  1.0, y +  0.0, z +  1.0], tc[1], col),
+                 Vertex::new([x +  0.0, y +  y3,  z +  1.0], tc[2], col),
+                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], tc[3], col),
             ).as_slice());
     // }
 
     // back
     // if block.north != 0 {
         vertices.push_all(
-            vec!(Vertex::new([x +  1.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
-                 Vertex::new([x +  0.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
-                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], [0.0, 0.0], col),
-                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], [1.0, 0.0], col),
+            vec!(Vertex::new([x +  1.0, y +  0.0, z +  0.0], tc[0], col),
+                 Vertex::new([x +  0.0, y +  0.0, z +  0.0], tc[1], col),
+                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], tc[2], col),
+                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], tc[3], col),
                  ).as_slice());
     // }
 
     // right
     // if block.east != 0 {
         vertices.push_all(
-            vec!(Vertex::new([x +  1.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
-                 Vertex::new([x +  1.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
-                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], [0.0, 0.0], col),
-                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], [1.0, 0.0], col),
+            vec!(Vertex::new([x +  1.0, y +  0.0, z +  1.0], tc[0], col),
+                 Vertex::new([x +  1.0, y +  0.0, z +  0.0], tc[1], col),
+                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], tc[2], col),
+                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], tc[3], col),
                  ).as_slice());
     // }
 
     // left
     // if block.west != 0 {
         vertices.push_all(
-            vec!(Vertex::new([x +  0.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
-                 Vertex::new([x +  0.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
-                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], [0.0, 0.0], col),
-                 Vertex::new([x +  0.0, y +  y3,  z +  1.0], [1.0, 0.0], col)
+            vec!(Vertex::new([x +  0.0, y +  0.0, z +  0.0], tc[0], col),
+                 Vertex::new([x +  0.0, y +  0.0, z +  1.0], tc[1], col),
+                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], tc[2], col),
+                 Vertex::new([x +  0.0, y +  y3,  z +  1.0], tc[3], col)
                  ).as_slice());
     // }
 
@@ -105,6 +106,18 @@ pub fn color_from_block_type(block_type: BlockType) -> [f32, ..3] {
         block::Field => [0.0, 1.0, 0.0],
         block::Building => [0.5, 0.5, 0.5],
         block::Air | block::Unused => [0.0, 0.0, 0.0]
+    }
+}
+
+pub fn tex_coords(block_type: BlockType) -> [[f32, ..2], ..4] {
+    let none = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]];
+    match block_type {
+        block::Water => [[0.0, 0.0],[0.33333, 0.0],[0.0, 0.33333],[0.33333, 0.33333]],
+        block::Road => [[0.33333, 0.0],[0.66666, 0.0],[0.33333, 0.33333],[0.66666, 0.33333]],
+        block::Pavement => [[0.66666, 0.0],[1.0, 0.0],[0.66666, 0.33333],[1.0, 0.33333]],
+        block::Field => [[0.0, 0.33333], [0.33333, 0.33333], [0.0, 0.66666], [0.33333, 0.66666]],
+        block::Building => [[0.33333, 0.33333], [0.66666, 0.33333], [0.33333, 0.66666], [0.66666, 0.66666]],
+        block::Air | block::Unused => none
     }
 }
 

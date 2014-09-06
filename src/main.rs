@@ -11,7 +11,7 @@ use sdl2_game_window::WindowSDL2;
 use gfx::{Device, DeviceHelper};
 use piston::{cam, Window};
 
-use map::{Map};
+use map::{Map, block, block_data};
 use renderer::{Renderer, Texture, Vertex, Params, _ParamsLink};
 use renderer::program::Program;
 use renderer::buffer::Buffer;
@@ -26,8 +26,8 @@ fn main() {
         piston::shader_version::opengl::OpenGL_3_2, 
         piston::WindowSettings {
             title: "gta".to_string(),
-            size: [960, 540],
-            fullscreen: false,
+            size: [1920, 1080],
+            fullscreen: true,
             exit_on_esc: true,
             samples: 4
         }

@@ -8,5 +8,5 @@ in vec3 v_color;
 in vec2 v_uv;
 
 void main() {
-    out_color = texture(s_texture, v_uv) * vec4(v_color, 1.0);
+    out_color = texture(s_texture, v_uv);
 }
