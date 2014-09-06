@@ -39,8 +39,8 @@ fn main() {
         Ok(map) => map
     };
 
-    let vertex_data = match Chunk::from_map(&map, [0, 0]) {
-        Some(verts) => verts.verts,
+    let (vertex_data, index_data) = match Chunk::from_map(&map, [0, 0]) {
+        Some(chunk) => (chunk.verts, chunk.indices),
         None => fail!("Couldn't generate chunk from map!")
     };
 
@@ -81,7 +81,8 @@ fn main() {
     let buf: Buffer<Vertex, Params, _ParamsLink> = Buffer::new(
         &mut renderer,
         &prog,
-        vertex_data.as_slice()
+        vertex_data.as_slice(),
+        index_data.as_slice()
     );
 
     let mut data = renderer::Params {

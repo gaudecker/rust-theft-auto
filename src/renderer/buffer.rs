@@ -14,19 +14,22 @@ pub struct Buffer<V: VertexFormat, P: ShaderParam<L>, L> {
 }
 
 impl<V: VertexFormat, P: ShaderParam<L>, L> Buffer<V, P, L> {
-    /// Creates a new buffer from `data`.
+    /// Creates a new buffer from `vertex_data` and `index_data`.
     pub fn new<D: Device<C>, C: CommandBuffer>(r: &mut Renderer<D, C>,
                                                program: &Program,
-                                               data: &[V]) -> Buffer<V, P, L> {
-        let buf = r.graphics.device.create_buffer(data.len(), gfx::UsageStatic);
-        r.graphics.device.update_buffer(buf, &data, 0);
+                                               vertex_data: &[V],
+                                               index_data: &[u32]) -> Buffer<V, P, L> {
+        let buf = r.graphics.device.create_buffer(vertex_data.len(), gfx::UsageStatic);
+        r.graphics.device.update_buffer(buf, &vertex_data, 0);
 
-        let mesh = gfx::Mesh::from_format(buf, data.len() as u32);
+        let mesh = gfx::Mesh::from_format(buf, vertex_data.len() as u32);
+        let slice = r.graphics.device.create_buffer_static::<u32>(&index_data)
+            .to_slice(gfx::TriangleList);
 
         Buffer {
             buf: buf,
             batch: r.graphics.make_batch(&program.handle, &mesh,
-                                         mesh.to_slice(gfx::TriangleStrip),
+                                         slice,
                                          &r.drawstate).unwrap()
         }
     }

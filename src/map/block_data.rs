@@ -1,11 +1,12 @@
 use std::vec::Vec;
+use std::iter::range_step;
 
 use super::super::renderer::{Vertex};
 use super::block;
 use super::block::{Block, BlockType};
 
 /// Returns vertices matching the topology of `block` offset by `offset`.
-pub fn from_block(block: Block, offset: [f32, ..3]) -> Vec<Vertex> {
+pub fn from_block(block: Block, offset: [f32, ..3], n: u32) -> (Vec<Vertex>, Vec<u32>) {
     let t = block.get_slope_type() as f32;
 
     // Calculate the lid vertices based on slope type.
@@ -34,33 +35,65 @@ pub fn from_block(block: Block, offset: [f32, ..3]) -> Vec<Vertex> {
     let col = color_from_block_type(block.get_block_type());
     let (x, y, z) = (offset[0], offset[1], offset[2]);
 
-    vec!(
-        // front
-        Vertex::new([x +  0.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  y3,  z +  1.0], [0.0, 0.0], col),
-        Vertex::new([x +  1.0, y +  y4,  z +  1.0], [1.0, 0.0], col),
-        // back
-        Vertex::new([x +  1.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  y2,  z +  0.0], [0.0, 0.0], col),
-        Vertex::new([x +  0.0, y +  y1,  z +  0.0], [1.0, 0.0], col),
-        // right
-        Vertex::new([x +  1.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  y4,  z +  1.0], [0.0, 0.0], col),
-        Vertex::new([x +  1.0, y +  y2,  z +  0.0], [1.0, 0.0], col),
-        // left
-        Vertex::new([x +  0.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  y1,  z +  0.0], [0.0, 0.0], col),
-        Vertex::new([x +  0.0, y +  y3,  z +  1.0], [1.0, 0.0], col),
-        // top
-        Vertex::new([x +  0.0, y +  y3,  z +  1.0], [0.0, 1.0], col),
-        Vertex::new([x +  1.0, y +  y4,  z +  1.0], [1.0, 1.0], col),
-        Vertex::new([x +  0.0, y +  y1,  z +  0.0], [0.0, 0.0], col),
-        Vertex::new([x +  1.0, y +  y2,  z +  0.0], [1.0, 0.0], col),
-    )
+    let mut vertices = Vec::new();
+    let mut indices = Vec::new();
+    
+    // top
+    // if block.lid != 0 {
+        vertices.push_all(
+            vec!(Vertex::new([x +  0.0, y +  y3,  z +  1.0], [0.0, 1.0], col),
+                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], [1.0, 1.0], col),
+                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], [0.0, 0.0], col),
+                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], [1.0, 0.0], col)
+            ).as_slice());
+    // }
+
+    // front
+    // if block.south != 0 {
+        vertices.push_all(
+            vec!(Vertex::new([x +  0.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
+                 Vertex::new([x +  1.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
+                 Vertex::new([x +  0.0, y +  y3,  z +  1.0], [0.0, 0.0], col),
+                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], [1.0, 0.0], col),
+            ).as_slice());
+    // }
+
+    // back
+    // if block.north != 0 {
+        vertices.push_all(
+            vec!(Vertex::new([x +  1.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
+                 Vertex::new([x +  0.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
+                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], [0.0, 0.0], col),
+                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], [1.0, 0.0], col),
+                 ).as_slice());
+    // }
+
+    // right
+    // if block.east != 0 {
+        vertices.push_all(
+            vec!(Vertex::new([x +  1.0, y +  0.0, z +  1.0], [0.0, 1.0], col),
+                 Vertex::new([x +  1.0, y +  0.0, z +  0.0], [1.0, 1.0], col),
+                 Vertex::new([x +  1.0, y +  y4,  z +  1.0], [0.0, 0.0], col),
+                 Vertex::new([x +  1.0, y +  y2,  z +  0.0], [1.0, 0.0], col),
+                 ).as_slice());
+    // }
+
+    // left
+    // if block.west != 0 {
+        vertices.push_all(
+            vec!(Vertex::new([x +  0.0, y +  0.0, z +  0.0], [0.0, 1.0], col),
+                 Vertex::new([x +  0.0, y +  0.0, z +  1.0], [1.0, 1.0], col),
+                 Vertex::new([x +  0.0, y +  y1,  z +  0.0], [0.0, 0.0], col),
+                 Vertex::new([x +  0.0, y +  y3,  z +  1.0], [1.0, 0.0], col)
+                 ).as_slice());
+    // }
+
+    let num_indices = n + (vertices.len() as f32 * 1.5) as u32;
+    for i in range_step(n, num_indices, 4) {
+        indices.push_all(vec!(i + 0, i + 1, i + 2, i + 1, i + 2, i + 3).as_slice());
+    }
+
+    (vertices, indices)
 }
 
 /// Returns a color vector based on `BlockType`.

@@ -13,7 +13,8 @@ static CHUNK_SIZE: uint = 255;
 
 pub struct Chunk {
     pub pos: [uint, ..2],
-    pub verts: Vec<Vertex>
+    pub verts: Vec<Vertex>,
+    pub indices: Vec<u32>
 }
 
 impl Chunk {
@@ -25,7 +26,9 @@ impl Chunk {
             return None;
         }
 
+        let mut index_offset = 0;
         let mut v = Vec::with_capacity(CHUNK_SIZE * CHUNK_SIZE * 36);
+        let mut i = Vec::with_capacity(CHUNK_SIZE * CHUNK_SIZE * 20);
         for x in range(offset[X], offset[X] + CHUNK_SIZE) {
             for y in range(offset[Y], offset[Y] + CHUNK_SIZE) {
                 let h = map.blocks[x][y].len();
@@ -36,19 +39,31 @@ impl Chunk {
                     if block.get_block_type() == block::Air {
                         continue;
                     }
-                    
-                    let block_verts = map::block_data::from_block(
+                    // if index_offset < 100 {
+                    //     println!("Indices from {}", index_offset);
+                    // }
+                    let (verts, indices) = map::block_data::from_block(
                         block,
-                        [256.0 - x as f32, z as f32, y as f32]
+                        [256.0 - x as f32, z as f32, y as f32],
+                        index_offset
                     );
-                    v.push_all(block_verts.as_slice());
+
+                    if (index_offset < 100 && indices.len() > 0) {
+                        println!("{} {}", verts.len(), indices[0]);
+                    }
+
+                    index_offset += verts.len() as u32;
+                    
+                    v.push_all(verts.as_slice());
+                    i.push_all(indices.as_slice());
                 }
             }
         }
 
         Some(Chunk {
             pos: offset,
-            verts: v
+            verts: v,
+            indices: i
         })
     }
 }
