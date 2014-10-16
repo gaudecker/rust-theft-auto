@@ -1,15 +1,15 @@
 #![feature(phase)]
 
 extern crate piston;
+extern crate sdl2;
 extern crate sdl2_game_window;
 extern crate gfx;
 extern crate device;
 extern crate render;
-extern crate image;
 
 use sdl2_game_window::WindowSDL2;
 use gfx::{Device, DeviceHelper};
-use piston::{cam, Window};
+use piston::{cam, image, Window};
 
 use map::{Map, block, block_data};
 use style::{Style};
@@ -18,14 +18,17 @@ use renderer::program::Program;
 use renderer::buffer::Buffer;
 use chunk::Chunk;
 
+pub use self::tile_set::TileSet;
+
 mod style;
 mod map;
 mod renderer;
 mod chunk;
+mod tile_set;
 
 fn main() {
     let mut window = WindowSDL2::new(
-        piston::shader_version::opengl::OpenGL_3_2, 
+        piston::shader_version::opengl::OpenGL_3_2,
         piston::WindowSettings {
             title: "gta".to_string(),
             size: [1920, 1080],
@@ -45,12 +48,20 @@ fn main() {
         Ok(style) => style
     };
 
+    let image = image::ImageLuma8(style.tiles.buffer);
+    let fout = std::io::File::create(&Path::new("test.png")).unwrap();
+    let _ = image.save(fout, image::PNG);
+
     let (vertex_data, index_data) = match Chunk::from_map(&map, [0, 0]) {
         Some(chunk) => (chunk.verts, chunk.indices),
         None => fail!("Couldn't generate chunk from map!")
     };
 
-    let (mut device, frame) = window.gfx();
+    let mut device = gfx::GlDevice::new(|s| unsafe {
+        std::mem::transmute(sdl2::video::gl_get_proc_address(s))
+    });
+    let (w, h) = window.get_size();
+    let frame = gfx::Frame::new(w as u16, h as u16);
 
     let projection = cam::CameraPerspective {
         fov: 90.0f32,

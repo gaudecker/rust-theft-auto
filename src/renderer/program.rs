@@ -40,6 +40,8 @@ fn load_shader_source(filename: &str) -> IoResult<gfx::ShaderSource> {
 
     Ok(gfx::ShaderSource {
         glsl_120: None,
+        glsl_130: None,
+        glsl_140: None,
         glsl_150: Some(gfx::OwnedBytes(src.into_bytes()))
     })
 }

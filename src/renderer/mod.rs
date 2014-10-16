@@ -6,8 +6,8 @@ use gfx::{Device, VertexFormat};
 use gfx::shade::{ShaderParam, TextureParam};
 use device;
 use device::draw::CommandBuffer;
-use image;
-use image::{GenericImage, ImageBuf, MutableRefImage, Pixel, Rgba};
+use piston::image;
+use piston::image::{GenericImage, ImageBuf, MutableRefImage, Pixel, Rgba};
 
 pub mod buffer;
 pub mod program;
@@ -71,7 +71,7 @@ impl Texture {
 
         let tex = d.create_texture(ti).unwrap();
 
-        d.update_texture(&tex, &ti.to_image_info(), &img.into_vec()).unwrap();
+        d.update_texture(&tex, &ti.to_image_info(), img.into_vec().as_slice()).unwrap();
         d.generate_mipmap(&tex);
 
         Texture {
@@ -111,16 +111,16 @@ impl<D: Device<C>, C: CommandBuffer> Renderer<D, C> {
             graphics: gfx::Graphics::new(device),
             frame: frame,
             clear_data: gfx::ClearData {
-                color: Some([0.05, 0.0, 0.06, 1.0]),
-                depth: Some(1.0),
-                stencil: None,
+                color: [0.05, 0.0, 0.06, 1.0],
+                depth: 1.0,
+                stencil: 0,
             },
             drawstate: drawstate,
         }
     }
 
     pub fn clear(&mut self) {
-        self.graphics.clear(self.clear_data, &self.frame);
+        self.graphics.clear(self.clear_data, gfx::COLOR | gfx::DEPTH, &self.frame);
     }
 
     pub fn render<V: VertexFormat, P: ShaderParam<L>, L>(&mut self,

@@ -1,4 +1,4 @@
-use super::{HlsInfo};
+use super::hls_info::HlsInfo;
 
 pub struct CarInfo {
     pub width: i16,
@@ -8,7 +8,7 @@ pub struct CarInfo {
     /// the first sprite number offset for this car. Note that this
     /// number is relative to the first car sprite in the sprites
     /// file.
-    pub spr_num: i16,
+    pub sprite_number: i16,
     /// The weight descriptor for the car.
     pub weight: i16,
 
@@ -41,7 +41,7 @@ pub struct CarInfo {
     pub moment: i32,
     /// The total mass of the car.
     pub mass: f32,
-    /// The 
+
     pub gear_thrust_ratio: f32,
     pub tyre_adhesion_x: f32,
     pub tyre_adhesion_y: f32,
@@ -78,6 +78,7 @@ pub struct CarInfo {
     pub doors: Vec<Door>
 }
 
+#[deriving(Show)]
 pub enum VehicleType {
     Unknown,
     Bus,

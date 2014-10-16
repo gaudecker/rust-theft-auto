@@ -173,9 +173,9 @@ fn read_locations(f: &mut File) -> IoResult<HashMap<location::LocationType, Vec<
         };
 
         let location_type = match n {
-            0..5 => location::PoliceStation,
-            6..11 => location::Hospital,
-            24..29 => location::FireStation,
+            0 ... 5 => location::PoliceStation,
+            6 ... 11 => location::Hospital,
+            24 ... 29 => location::FireStation,
             _ => location::Unknown
         };
 
