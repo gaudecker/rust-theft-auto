@@ -48,7 +48,6 @@ fn main() {
             samples: 4
         }
     );
-    //window.capture_cursor(true);
     window.set_mut(CaptureCursor(true));
 
     let map = match Map::from_file("data/nyc.cmp") {
