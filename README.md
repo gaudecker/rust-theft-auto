@@ -2,6 +2,13 @@
 
 A Grand Theft Auto engine reimplementation in Rust.
 
+![screenshot](./screenshot.png)
+
+## Running
+
+Copy `nyc.cmp` and `style001.g24` from your GTA installation directory
+to `data`.
+
 ## Goals
 
 - Reimplement gameplay from original Grand Theft Auto.
