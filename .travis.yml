@@ -2,6 +2,9 @@ language: rust
 os:
     - linux
     - osx
+env:
+    global:
+        - LD_LIBRARY_PATH: /usr/local/lib
 before_install:
     - curl -O http://www.libsdl.org/release/SDL2-2.0.3.tar.gz
     - tar -xzvf SDL2-2.0.3.tar.gz
