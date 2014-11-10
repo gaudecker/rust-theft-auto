@@ -6,8 +6,8 @@ authors = ["Eeli <eeli@fea.st>"]
 
 [dependencies.piston]
 git = "https://github.com/PistonDevelopers/piston"
-[dependencies.sdl2_game_window]
-git = "https://github.com/PistonDevelopers/sdl2_game_window"
+[dependencies.sdl2_window]
+git = "https://github.com/PistonDevelopers/sdl2_window"
 [dependencies.image]
 git = "https://github.com/PistonDevelopers/rust-image"
 [dependencies.gfx]

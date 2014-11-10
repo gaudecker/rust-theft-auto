@@ -52,7 +52,7 @@ impl Style {
         println!("Loading style {}", filename);
 
         let mut f = match File::open(&Path::new(filename)) {
-            Err(why) => fail!("Could not read {}: {}", filename, why.desc),
+            Err(why) => panic!("Could not read {}: {}", filename, why.desc),
             Ok(file) => file
         };
 

@@ -12,14 +12,14 @@ pub struct Program {
 }
 
 impl Program {
-    pub fn new<D: Device<C>, C: CommandBuffer>(r: &mut Renderer<D, C>, name: &str) -> Program {
+    pub fn new<D: Device<C>, C: CommandBuffer>(r: &mut Renderer<D, C>, _filename: &str) -> Program {
         let vert_src = match load_shader_source("data/shader.vert") {
             Ok(src) => src,
-            Err(err) => fail!(err.desc)
+            Err(err) => panic!(err.desc)
         };
         let frag_src = match load_shader_source("data/shader.frag") {
             Ok(src) => src,
-            Err(err) => fail!(err.desc)
+            Err(err) => panic!(err.desc)
         };
 
         Program {
@@ -30,11 +30,11 @@ impl Program {
 
 fn load_shader_source(filename: &str) -> IoResult<gfx::ShaderSource> {
     let mut f = match File::open(&Path::new(filename)) {
-        Err(why) => fail!("Could not open {}: {}", filename, why.desc),
+        Err(why) => panic!("Could not open {}: {}", filename, why.desc),
         Ok(file) => file
     };
     let mut src = match f.read_to_string() {
-        Err(why) => fail!("Could not read shader from {}: {}", filename, why.desc),
+        Err(why) => panic!("Could not read shader from {}: {}", filename, why.desc),
         Ok(src) => src
     };
 

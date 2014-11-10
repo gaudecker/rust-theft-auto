@@ -26,7 +26,7 @@ impl Map {
     pub fn from_file(filename: &str) -> IoResult<Map> {
         println!("Loading map {}", filename);
         let mut f = match File::open(&Path::new(filename)) {
-            Err(why) => fail!("could not read {}: {}", filename, why.desc),
+            Err(why) => panic!("could not read {}: {}", filename, why.desc),
             Ok(file) => file
         };
         let header = Header {
@@ -58,10 +58,6 @@ impl Map {
             locations: locations,
             zones: zones
         })
-    }
-
-    pub fn get_locations(&self, location_type: &location::LocationType) -> &Vec<location::Location> {
-        self.locations.get(location_type)
     }
 }
 
@@ -183,10 +179,13 @@ fn read_locations(f: &mut File) -> IoResult<HashMap<location::LocationType, Vec<
             continue;
         }
 
-        locations.get_mut(&location_type).push(location::Location {
-            location_type: location_type,
-            position: pos
-        });
+        match locations.get_mut(&location_type) {
+            Some(l) => l.push(location::Location {
+                location_type: location_type,
+                position: pos
+            }),
+            None => {}
+        }
     }
     Ok(locations)
 }
