@@ -13,13 +13,25 @@ pub struct Program {
 
 impl Program {
     pub fn new<D: Device<C>, C: CommandBuffer>(r: &mut Renderer<D, C>, _filename: &str) -> Program {
-        let vert_src = match load_shader_source("data/shader.vert") {
+        let vert = match load_shader_source("data/shader.vert") {
             Ok(src) => src,
             Err(err) => panic!(err.desc)
         };
-        let frag_src = match load_shader_source("data/shader.frag") {
+        let vert_src = gfx::ShaderSource {
+            glsl_120: None,
+            glsl_130: None,
+            glsl_140: None,
+            glsl_150: Some(vert.as_bytes())
+        };
+        let frag = match load_shader_source("data/shader.frag") {
             Ok(src) => src,
             Err(err) => panic!(err.desc)
+        };
+        let frag_src = gfx::ShaderSource {
+            glsl_120: None,
+            glsl_130: None,
+            glsl_140: None,
+            glsl_150: Some(frag.as_bytes())
         };
 
         Program {
@@ -28,20 +40,10 @@ impl Program {
     }
 }
 
-fn load_shader_source(filename: &str) -> IoResult<gfx::ShaderSource> {
+fn load_shader_source(filename: &str) -> IoResult<String> {
     let mut f = match File::open(&Path::new(filename)) {
         Err(why) => panic!("Could not open {}: {}", filename, why.desc),
         Ok(file) => file
     };
-    let mut src = match f.read_to_string() {
-        Err(why) => panic!("Could not read shader from {}: {}", filename, why.desc),
-        Ok(src) => src
-    };
-
-    Ok(gfx::ShaderSource {
-        glsl_120: None,
-        glsl_130: None,
-        glsl_140: None,
-        glsl_150: Some(gfx::OwnedBytes(src.into_bytes()))
-    })
+    f.read_to_string()
 }
